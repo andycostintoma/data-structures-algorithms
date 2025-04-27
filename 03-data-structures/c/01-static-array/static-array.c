@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define STATIC_ARRAY_CAPACITY 10  // Maximum number of elements the array can hold
+#define STATIC_ARRAY_CAPACITY 10 // Maximum number of elements the array can hold
 
-typedef struct {
+typedef struct
+{
     int data[STATIC_ARRAY_CAPACITY];
     int size;
 } StaticArray;
@@ -12,15 +13,18 @@ typedef struct {
 /*
  * O(1) - Initializing a StaticArray with a given capacity
  */
-void initArray(StaticArray *array) {
+void initArray(StaticArray *array)
+{
     array->size = 0;
 }
 
 /*
  * O(1) - Direct access to the index in the array.
  */
-int get(StaticArray *array, int index) {
-    if (index < 0 || index >= array->size) {
+int get(StaticArray *array, int index)
+{
+    if (index < 0 || index >= array->size)
+    {
         printf("Index %d out of bounds!\n", index);
         exit(EXIT_FAILURE);
     }
@@ -30,9 +34,12 @@ int get(StaticArray *array, int index) {
 /*
  * O(n) - Linear search through the array to find the element.
  */
-int search(StaticArray *array, int value) {
-    for (int i = 0; i < array->size; i++) {
-        if (array->data[i] == value) {
+int search(StaticArray *array, int value)
+{
+    for (int i = 0; i < array->size; i++)
+    {
+        if (array->data[i] == value)
+        {
             return i;
         }
     }
@@ -42,16 +49,20 @@ int search(StaticArray *array, int value) {
 /*
  * O(n) - Linear shift of elements to insert the new value.
  */
-void insert(StaticArray *array, int index, int value) {
-    if (index < 0 || index > array->size) {
+void insert(StaticArray *array, int index, int value)
+{
+    if (index < 0 || index > array->size)
+    {
         printf("Insert index %d out of bounds!\n", index);
         return;
     }
-    if (array->size >= STATIC_ARRAY_CAPACITY) {
+    if (array->size >= STATIC_ARRAY_CAPACITY)
+    {
         printf("Array is full!\n");
         return;
     }
-    for (int i = array->size; i > index; i--) {
+    for (int i = array->size; i > index; i--)
+    {
         array->data[i] = array->data[i - 1];
     }
     array->data[index] = value;
@@ -61,12 +72,15 @@ void insert(StaticArray *array, int index, int value) {
 /*
  * O(n) - Linear shift of elements to delete the value at the given index.
  */
-void delete(StaticArray *array, int index) {
-    if (index < 0 || index >= array->size) {
+void delete(StaticArray *array, int index)
+{
+    if (index < 0 || index >= array->size)
+    {
         printf("Delete index %d out of bounds!\n", index);
         return;
     }
-    for (int i = index; i < array->size - 1; i++) {
+    for (int i = index; i < array->size - 1; i++)
+    {
         array->data[i] = array->data[i + 1];
     }
     array->size--;
@@ -75,8 +89,10 @@ void delete(StaticArray *array, int index) {
 /*
  * O(1) - Appending to the end of the array.
  */
-void append(StaticArray *array, int value) {
-    if (array->size >= STATIC_ARRAY_CAPACITY) {
+void append(StaticArray *array, int value)
+{
+    if (array->size >= STATIC_ARRAY_CAPACITY)
+    {
         printf("Array is full!\n");
         return;
     }
@@ -87,8 +103,10 @@ void append(StaticArray *array, int value) {
 /*
  * O(1) - Removing and returning the last element.
  */
-int pop(StaticArray *array) {
-    if (array->size == 0) {
+int pop(StaticArray *array)
+{
+    if (array->size == 0)
+    {
         printf("Cannot pop from an empty array!\n");
         exit(EXIT_FAILURE);
     }
@@ -100,12 +118,15 @@ int pop(StaticArray *array) {
 /*
  * O(1) - Direct printing of the array.
  */
-void printArray(const StaticArray *array) {
+void printArray(const StaticArray *array)
+{
     printf("[");
 
-    for (int i = 0; i < array->size; i++) {
+    for (int i = 0; i < array->size; i++)
+    {
         printf("%d", array->data[i]);
-        if (i < array->size - 1) {
+        if (i < array->size - 1)
+        {
             printf(", ");
         }
     }
@@ -113,9 +134,10 @@ void printArray(const StaticArray *array) {
     printf("]\n");
 }
 
-int main() {
+int main()
+{
     StaticArray array;
-    initArray(&array);  // Initialize array with fixed capacity
+    initArray(&array); // Initialize array with fixed capacity
 
     append(&array, 0);
     append(&array, 1);
@@ -130,7 +152,7 @@ int main() {
     printf("After insert at index 2: ");
     printArray(&array);
 
-    delete(&array, 1);
+    delete (&array, 1);
     printf("After delete at index 1: ");
     printArray(&array);
 
@@ -140,9 +162,12 @@ int main() {
     printArray(&array);
 
     int foundIndex = search(&array, 3);
-    if (foundIndex != -1) {
+    if (foundIndex != -1)
+    {
         printf("Found 3 at index %d\n", foundIndex);
-    } else {
+    }
+    else
+    {
         printf("3 not found in the array\n");
     }
 
