@@ -23,7 +23,7 @@ void linkedListAppend(LinkedList *list, Node *node);
 void linkedListInsertAtIndex(LinkedList *list, int index, Node *node);
 void linkedListInsertAfterNode(LinkedList *list, Node *prevNode, Node *node);
 void linkedListDeleteAtIndex(LinkedList *list, int index);
-void linkedListDeleteNode(LinkedList *list, Node *nodeToDelete);
+void linkedListDeleteNodeAfter(LinkedList *list, Node *prevNode);
 void linkedListPrint(const LinkedList *list);
 
 #endif // LINKED_LIST_H

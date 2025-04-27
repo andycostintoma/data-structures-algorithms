@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "linked-list.h"
+#include "doubly-linked-list.h"
 
 // Helper function to handle memory allocation (centralized check)
 Node *createNode(int value)
@@ -13,18 +13,20 @@ Node *createNode(int value)
     }
     newNode->value = value;
     newNode->next = NULL;
+    newNode->prev = NULL;
     return newNode;
 }
 
-// Initializes a linked list (O(1))
-void linkedListInit(LinkedList *list)
+// Initializes a doubly linked list (O(1))
+void doublyLinkedListInit(DoublyLinkedList *list)
 {
     list->head = NULL;
+    list->tail = NULL;
     list->size = 0;
 }
 
-// Frees all nodes in the linked list (O(n))
-void linkedListFree(LinkedList *list)
+// Frees all nodes in the doubly linked list (O(n))
+void doublyLinkedListFree(DoublyLinkedList *list)
 {
     if (!list)
         return; // Check if list is NULL
@@ -36,11 +38,12 @@ void linkedListFree(LinkedList *list)
         current = next;
     }
     list->head = NULL;
+    list->tail = NULL;
     list->size = 0;
 }
 
 // Returns the node at the given index (O(n))
-Node *linkedListGetAtIndex(LinkedList *list, int index)
+Node *doublyLinkedListGetAtIndex(DoublyLinkedList *list, int index)
 {
     if (!list || index < 0 || index >= list->size)
     {
@@ -57,7 +60,7 @@ Node *linkedListGetAtIndex(LinkedList *list, int index)
 }
 
 // Searches for a value, returns its index or -1 (O(n))
-int linkedListSearch(LinkedList *list, int value)
+int doublyLinkedListSearch(DoublyLinkedList *list, int value)
 {
     if (!list)
         return -1; // Check if list is NULL
@@ -77,27 +80,46 @@ int linkedListSearch(LinkedList *list, int value)
 }
 
 // Inserts a node at the head (O(1))
-void linkedListPrepend(LinkedList *list, Node *node)
+void doublyLinkedListPrepend(DoublyLinkedList *list, Node *node)
 {
     if (!list || !node)
         return; // Check if list or node is NULL
 
     node->next = list->head;
+    if (list->head != NULL)
+    {
+        list->head->prev = node;
+    }
     list->head = node;
+    if (list->tail == NULL)
+    {
+        list->tail = node;
+    }
     list->size++;
 }
 
-// Inserts a node at the tail (O(n))
-void linkedListAppend(LinkedList *list, Node *node)
+// Inserts a node at the tail (O(1))
+void doublyLinkedListAppend(DoublyLinkedList *list, Node *node)
 {
     if (!list || !node)
         return; // Check if list or node is NULL
 
-    linkedListInsertAtIndex(list, list->size, node);
+    if (list->tail == NULL)
+    {
+        list->head = node;
+        list->tail = node;
+    }
+    else
+    {
+        node->prev = list->tail;
+        list->tail->next = node;
+        list->tail = node;
+    }
+    list->size++;
 }
 
 // Inserts a node at a given index (O(n))
-void linkedListInsertAtIndex(LinkedList *list, int index, Node *node)
+void doublyLinkedListInsertAtIndex(DoublyLinkedList *list, int index, Node *node)
 {
     if (!list || !node || index < 0 || index > list->size)
     {
@@ -107,85 +129,69 @@ void linkedListInsertAtIndex(LinkedList *list, int index, Node *node)
 
     if (index == 0)
     {
-        linkedListPrepend(list, node);
+        doublyLinkedListPrepend(list, node);
+        return;
+    }
+    else if (index == list->size)
+    {
+        doublyLinkedListAppend(list, node);
         return;
     }
 
     Node *current = list->head;
-    for (int i = 0; i < index - 1; i++)
+    for (int i = 0; i < index; i++)
     {
         current = current->next;
     }
-    node->next = current->next;
-    current->next = node;
+
+    node->next = current;
+    node->prev = current->prev;
+    if (current->prev != NULL)
+    {
+        current->prev->next = node;
+    }
+    current->prev = node;
+
     list->size++;
 }
 
-// Inserts a node after the given node (O(1))
-void linkedListInsertAfterNode(LinkedList *list, Node *prevNode, Node *node)
+// Deletes a node from the list (O(1))
+void doublyLinkedListDeleteNode(DoublyLinkedList *list, Node *node)
 {
-    if (!prevNode || !node)
+    if (!list || !node)
     {
-        fprintf(stderr, "Previous node or node cannot be NULL\n");
+        fprintf(stderr, "List or node is NULL\n");
         return;
     }
 
-    node->next = prevNode->next;
-    prevNode->next = node;
-
-    list->size++;
-}
-
-// Deletes a node at a given index (O(n))
-void linkedListDeleteAtIndex(LinkedList *list, int index)
-{
-    if (!list || index < 0 || index >= list->size)
+    if (node == list->head)
     {
-        fprintf(stderr, "Index out of bounds\n");
-        return; // Return without modifying the list
+        list->head = node->next;
+        if (list->head != NULL)
+        {
+            list->head->prev = NULL;
+        }
     }
-
-    Node *toDelete;
-
-    if (index == 0)
+    else if (node == list->tail)
     {
-        toDelete = list->head;
-        list->head = list->head->next;
+        list->tail = node->prev;
+        if (list->tail != NULL)
+        {
+            list->tail->next = NULL;
+        }
     }
     else
     {
-        Node *current = list->head;
-        for (int i = 0; i < index - 1; i++)
-        {
-            current = current->next;
-        }
-        toDelete = current->next;
-        current->next = toDelete->next;
+        node->prev->next = node->next;
+        node->next->prev = node->prev;
     }
 
-    free(toDelete);
+    free(node);
     list->size--;
 }
 
-// Deletes the node after the given node (O(1))
-void linkedListDeleteNodeAfter(LinkedList *list, Node *prevNode)
-{
-    if (!list || !prevNode || !prevNode->next)
-    {
-        fprintf(stderr, "Previous node is NULL or there is no node after the previous node\n");
-        return;
-    }
-
-    Node *nodeToDelete = prevNode->next; // The node to delete is the one after the prevNode
-
-    prevNode->next = nodeToDelete->next; // Link the previous node to the next of the nodeToDelete
-    free(nodeToDelete);                  // Free the memory of the node that was deleted
-
-    list->size--;
-}
-
-// Prints the linked list (O(n))
-void linkedListPrint(const LinkedList *list)
+// Prints the doubly linked list (O(n))
+void doublyLinkedListPrint(const DoublyLinkedList *list)
 {
     if (!list)
         return; // Check if list is NULL
