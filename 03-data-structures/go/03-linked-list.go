@@ -27,13 +27,8 @@ func NewLinkedList() *LinkedList {
 	return &LinkedList{}
 }
 
-// Free frees all nodes in the linked list. (O(n))
+// Free frees all nodes in the linked list.
 func (list *LinkedList) Free() {
-	current := list.Head
-	for current != nil {
-		next := current.Next
-		current = next
-	}
 	list.Head = nil
 	list.Size = 0
 }
@@ -132,25 +127,24 @@ func (list *LinkedList) DeleteAtIndex(index int) error {
 	return nil
 }
 
-// DeleteNode deletes a specific node from the list. (O(n))
-func (list *LinkedList) DeleteNode(nodeToDelete *Node) error {
-	if nodeToDelete == nil {
-		return errors.New("node to delete cannot be nil")
+// DeleteNodeAfter deletes the node after the given node. (O(1))
+func (list *LinkedList) DeleteNodeAfter(prevNode *Node) error {
+	if prevNode == nil || prevNode.Next == nil {
+		return errors.New("previous node is nil or there is no node after the previous node")
 	}
-	if nodeToDelete == list.Head {
-		list.Head = list.Head.Next
-		list.Size--
-		return nil
-	}
-	current := list.Head
-	for current != nil && current.Next != nodeToDelete {
-		current = current.Next
-	}
-	if current == nil {
-		return errors.New("node not found in the list")
-	}
-	current.Next = nodeToDelete.Next
+
+	// The node to delete is the one after prevNode
+	nodeToDelete := prevNode.Next
+
+	// Link the previous node to the next node
+	prevNode.Next = nodeToDelete.Next
+
+	// Clear the node's next to help garbage collection
+	nodeToDelete.Next = nil
+
+	// Decrement the size of the list
 	list.Size--
+
 	return nil
 }
 
