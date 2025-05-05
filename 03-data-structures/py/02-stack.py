@@ -5,20 +5,20 @@ class Stack:
     # O(1) - Simply returns the length of the list, which is tracked by the list object
     def size(self):
         return len(self.items)
-    
+
     # O(1) - Accessing the last element (constant time)
     def peek(self):
         if len(self.items) == 0:
             return None
         return self.items[-1]
-    
+
     # O(n) - Search operation: We need to iterate through the entire stack to find the item
     def search(self, item):
         for index, element in enumerate(self.items):
             if element == item:
                 return index
         return -1  # Return -1 if item is not found
-    
+
     # O(1) - Insertion at the end of the list (amortized constant time for dynamic arrays)
     def push(self, item):
         self.items.append(item)
@@ -56,6 +56,7 @@ def main():
     # Pop operation (remove the top item)
     print(f"Popped item: {stack.pop()}")  # O(1)
     print(f"Stack size after pop: {stack.size()}")  # O(1)
+
 
 if __name__ == "__main__":
     main()

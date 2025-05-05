@@ -1,5 +1,6 @@
 class Node:
     """Represents a single element in the linked list."""
+
     def __init__(self, value):
         self.value = value
         self.next = None
@@ -7,6 +8,7 @@ class Node:
 
 class Queue:
     """Queue implementation using a linked list."""
+
     def __init__(self):
         self.head = None
         self.tail = None
