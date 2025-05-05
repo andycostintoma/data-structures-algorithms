@@ -12,27 +12,27 @@ typedef struct BSTNode
 } BSTNode;
 
 // -------------------- Creation & Destruction --------------------
-BSTNode *bst_create(int val);
-void bst_free(BSTNode *root);
+BSTNode *bstCreate(int val);
+void bstFree(BSTNode *root);
 
 // -------------------- Access --------------------
-int *bst_get_min(BSTNode *root);
-int *bst_get_max(BSTNode *root);
+int *bstGetMin(BSTNode *root);
+int *bstGetMax(BSTNode *root);
 
 // -------------------- Search --------------------
-bool bst_exists(BSTNode *root, int val);
+bool bstExists(BSTNode *root, int val);
 
 // -------------------- Insertion --------------------
-void bst_insert(BSTNode *root, int val);
+void bstInsert(BSTNode *root, int val);
 
 // -------------------- Deletion --------------------
-BSTNode *bst_delete(BSTNode *root, int val);
+BSTNode *bstDelete(BSTNode *root, int val);
 
 // -------------------- Other operations --------------------
-int bst_height(BSTNode *root);
-void bst_preorder_traversal(BSTNode *root, DynamicArray visited);
-void bst_inorder_traversal(BSTNode *root, DynamicArray visited);
-void bst_postorder_traversal(BSTNode *root, DynamicArray visited);
-void bst_print(BSTNode *root, int level);
+int bstHeight(BSTNode *root);
+DynamicArray bstPreorderTraversal(BSTNode *root);
+DynamicArray bstInorderTraversal(BSTNode *root);
+DynamicArray bstPostorderTraversal(BSTNode *root);
+void bstPrint(BSTNode *root, int level);
 
 #endif // BST_H

@@ -30,7 +30,7 @@ run-05: 05-queue/main.c 05-queue/queue.c 05-queue/queue.h 04-linked-list/linked-
 	./run-05
 	rm -f run-05
 
-run-06: 06-doubly-linked-list/main.c 06-doubly-linked-list/doubly-linked-list.c 06-doubly-linked-list/doubly-linked-list.h
-	$(CC) $(CFLAGS) $(INCLUDES) 06-doubly-linked-list/main.c 06-doubly-linked-list/doubly-linked-list.c -o run-06
+run-06: 06-bst/main.c 06-bst/bst.c 06-bst/bst.h 02-dynamic-array/dynamic-array.c 02-dynamic-array/dynamic-array.h
+	$(CC) $(CFLAGS) $(INCLUDES) 06-bst/main.c 06-bst/bst.c 02-dynamic-array/dynamic-array.c -o run-06
 	./run-06
 	rm -f run-06

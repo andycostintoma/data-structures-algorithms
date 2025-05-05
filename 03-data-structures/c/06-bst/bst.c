@@ -4,7 +4,7 @@
 
 // -------------------- Creation & Destruction --------------------
 
-BSTNode *bst_create(int val)
+BSTNode *bstCreate(int val)
 {
     BSTNode *newNode = (BSTNode *)malloc(sizeof(BSTNode));
     if (newNode == NULL)
@@ -18,12 +18,12 @@ BSTNode *bst_create(int val)
     return newNode;
 }
 
-void bst_free(BSTNode *root)
+void bstFree(BSTNode *root)
 {
     if (root == NULL)
         return;
-    bst_free(root->left);
-    bst_free(root->right);
+    bstFree(root->left);
+    bstFree(root->right);
     free(root);
 }
 
@@ -33,26 +33,26 @@ void bst_free(BSTNode *root)
  * Time Complexity: O(log n) average, O(n) worst-case
  * Returns NULL if the tree is empty.
  */
-int *bst_get_min(BSTNode *root)
+int *bstGetMin(BSTNode *root)
 {
     if (root == NULL)
         return NULL;
     if (root->left == NULL)
         return &root->val;
-    return bst_get_min(root->left);
+    return bstGetMin(root->left);
 }
 
 /*
  * Time Complexity: O(log n) average, O(n) worst-case
  * Returns NULL if the tree is empty.
  */
-int *bst_get_max(BSTNode *root)
+int *bstGetMax(BSTNode *root)
 {
     if (root == NULL)
         return NULL;
     if (root->right == NULL)
         return &root->val;
-    return bst_get_max(root->right);
+    return bstGetMax(root->right);
 }
 
 // -------------------- Search --------------------
@@ -60,15 +60,15 @@ int *bst_get_max(BSTNode *root)
 /*
  * Time Complexity: O(log n) average, O(n) worst-case
  */
-bool bst_exists(BSTNode *root, int val)
+bool bstExists(BSTNode *root, int val)
 {
     if (root == NULL)
         return false;
     if (val == root->val)
         return true;
     if (val < root->val)
-        return bst_exists(root->left, val);
-    return bst_exists(root->right, val);
+        return bstExists(root->left, val);
+    return bstExists(root->right, val);
 }
 
 // -------------------- Insertion --------------------
@@ -76,7 +76,7 @@ bool bst_exists(BSTNode *root, int val)
 /*
  * Time Complexity: O(log n) average, O(n) worst-case
  */
-void bst_insert(BSTNode *root, int val)
+void bstInsert(BSTNode *root, int val)
 {
     if (root == NULL)
         return;
@@ -87,16 +87,16 @@ void bst_insert(BSTNode *root, int val)
     if (val < root->val)
     {
         if (root->left)
-            bst_insert(root->left, val);
+            bstInsert(root->left, val);
         else
-            root->left = bst_create(val);
+            root->left = bstCreate(val);
     }
     else
     {
         if (root->right)
-            bst_insert(root->right, val);
+            bstInsert(root->right, val);
         else
-            root->right = bst_create(val);
+            root->right = bstCreate(val);
     }
 }
 
@@ -105,18 +105,18 @@ void bst_insert(BSTNode *root, int val)
 /*
  * Time Complexity: O(log n) average, O(n) worst-case
  */
-BSTNode *bst_delete(BSTNode *root, int val)
+BSTNode *bstDelete(BSTNode *root, int val)
 {
     if (root == NULL)
         return NULL;
 
     if (val < root->val)
     {
-        root->left = bst_delete(root->left, val);
+        root->left = bstDelete(root->left, val);
     }
     else if (val > root->val)
     {
-        root->right = bst_delete(root->right, val);
+        root->right = bstDelete(root->right, val);
     }
     else
     {
@@ -140,7 +140,7 @@ BSTNode *bst_delete(BSTNode *root, int val)
         }
 
         root->val = minLargerNode->val;
-        root->right = bst_delete(root->right, minLargerNode->val);
+        root->right = bstDelete(root->right, minLargerNode->val);
     }
 
     return root;
@@ -151,61 +151,100 @@ BSTNode *bst_delete(BSTNode *root, int val)
 /*
  * Time Complexity: O(n)
  */
-int bst_height(BSTNode *root)
+int bstHeight(BSTNode *root)
 {
     if (root == NULL)
         return 0;
 
-    int lh = bst_height(root->left);
-    int rh = bst_height(root->right);
+    int lh = bstHeight(root->left);
+    int rh = bstHeight(root->right);
 
     return (lh > rh ? lh : rh) + 1;
 }
 
-/*
+/**
  * Time Complexity: O(n)
+ * Performs an inorder traversal and returns the result in a dynamic array.
  */
-void bst_preorder_traversal(BSTNode *root, int visited[], int *size)
+DynamicArray bstInorderTraversal(BSTNode *root)
 {
+    DynamicArray visited;
+    arrayInit(&visited, 10);
+
     if (root == NULL)
-        return;
-    visited[(*size)++] = root->val;
-    bst_preorder_traversal(root->left, visited, size);
-    bst_preorder_traversal(root->right, visited, size);
+        return visited;
+
+    DynamicArray left = bstInorderTraversal(root->left);
+    for (int i = 0; i < left.size; i++)
+        arrayAppend(&visited, left.data[i]);
+
+    arrayAppend(&visited, root->val);
+
+    DynamicArray right = bstInorderTraversal(root->right);
+    for (int i = 0; i < right.size; i++)
+        arrayAppend(&visited, right.data[i]);
+
+    return visited;
+}
+
+/**
+ * Time Complexity: O(n)
+ * Performs a preorder traversal and returns the result in a dynamic array.
+ */
+DynamicArray bstPreorderTraversal(BSTNode *root)
+{
+    DynamicArray visited;
+    arrayInit(&visited, 10);
+
+    if (root == NULL)
+        return visited;
+
+    arrayAppend(&visited, root->val);
+
+    DynamicArray left = bstPreorderTraversal(root->left);
+    for (int i = 0; i < left.size; i++)
+        arrayAppend(&visited, left.data[i]);
+
+    DynamicArray right = bstPreorderTraversal(root->right);
+    for (int i = 0; i < right.size; i++)
+        arrayAppend(&visited, right.data[i]);
+
+    return visited;
+}
+
+/**
+ * Time Complexity: O(n)
+ * Performs a postorder traversal and returns the result in a dynamic array.
+ */
+DynamicArray bstPostorderTraversal(BSTNode *root)
+{
+    DynamicArray visited;
+    arrayInit(&visited, 10);
+
+    if (root == NULL)
+        return visited;
+
+    DynamicArray left = bstPostorderTraversal(root->left);
+    for (int i = 0; i < left.size; i++)
+        arrayAppend(&visited, left.data[i]);
+
+    DynamicArray right = bstPostorderTraversal(root->right);
+    for (int i = 0; i < right.size; i++)
+        arrayAppend(&visited, right.data[i]);
+
+    arrayAppend(&visited, root->val);
+
+    return visited;
 }
 
 /*
  * Time Complexity: O(n)
  */
-void bst_inorder_traversal(BSTNode *root, int visited[], int *size)
+void bstPrint(BSTNode *root, int level)
 {
     if (root == NULL)
         return;
-    bst_inorder_traversal(root->left, visited, size);
-    visited[(*size)++] = root->val;
-    bst_inorder_traversal(root->right, visited, size);
-}
-
-/*
- * Time Complexity: O(n)
- */
-void bst_postorder_traversal(BSTNode *root, int visited[], int *size)
-{
-    if (root == NULL)
-        return;
-    bst_postorder_traversal(root->left, visited, size);
-    bst_postorder_traversal(root->right, visited, size);
-    visited[(*size)++] = root->val;
-}
-
-/*
- * Time Complexity: O(n)
- */
-void bst_print(BSTNode *root, int level)
-{
-    if (root == NULL)
-        return;
-    bst_print(root->right, level + 1);
+    bstPrint(root->right, level + 1);
     printf("%*s%d\n", level * 4, "", root->val);
-    bst_print(root->left, level + 1);
+    bstPrint(root->left, level + 1);
 }
