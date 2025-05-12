@@ -5,8 +5,8 @@ CFLAGS = -Wall -Wextra -g
 INCLUDES = $(patsubst %,-I%,$(shell find . -type d))
 
 # Targets for each individual example
-run-01: 01-static-array/static-array.c
-	$(CC) $(CFLAGS) $(INCLUDES) 01-static-array/static-array.c -o run-01
+run-01: 01-static-array/main.c
+	$(CC) $(CFLAGS) $(INCLUDES) 01-static-array/main.c -o run-01
 	./run-01
 	rm -f run-01
 
