@@ -165,36 +165,3 @@ func (list *LinkedList) Print() {
 	}
 	fmt.Println("]")
 }
-
-func main() {
-	// Example usage
-	list := NewLinkedList()
-
-	// Prepend nodes
-	list.Prepend(NewNode(10))
-	list.Prepend(NewNode(20))
-	list.Prepend(NewNode(30))
-
-	// Print the list
-	list.Print() // Expected: [30, 20, 10]
-
-	// Append a node
-	if err := list.Append(NewNode(5)); err != nil {
-		fmt.Println("Error:", err)
-	}
-
-	// Print the list
-	list.Print() // Expected: [30, 20, 10, 5]
-
-	// Search for a value
-	index := list.Search(20)
-	fmt.Printf("Index of 20: %d\n", index) // Expected: Index of 20: 1
-
-	// Delete a node
-	if err := list.DeleteAtIndex(1); err != nil {
-		fmt.Println("Error:", err)
-	}
-
-	// Print the list after deletion
-	list.Print() // Expected: [30, 10, 5]
-}

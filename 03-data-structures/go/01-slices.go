@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -42,53 +41,4 @@ func delete(arr []int, index int) ([]int, error) {
 	copy(arr[index:], arr[index+1:]) // shift elements left
 	arr = arr[:len(arr)-1]           // shrink slice
 	return arr, nil
-}
-
-// O(1)
-func pop(arr []int) ([]int, int, error) {
-	if len(arr) == 0 {
-		return nil, 0, errors.New("cannot pop from empty array")
-	}
-	value := arr[len(arr)-1]
-	arr = arr[:len(arr)-1]
-	return arr, value, nil
-}
-
-// ---- Main Demo ----
-
-func main() {
-	arr := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-	fmt.Println("After initialization:", arr)
-
-	arr, err := insert(arr, 5, 99)
-	if err != nil {
-		fmt.Println("Insert error:", err)
-		return
-	}
-	fmt.Println("After insert at index 5:", arr)
-
-	arr, err = delete(arr, 2)
-	if err != nil {
-		fmt.Println("Delete error:", err)
-		return
-	}
-	fmt.Println("After delete at index 2:", arr)
-
-	// O(1)
-	arr = append(arr, 100)
-	fmt.Println("After appending 100:", arr)
-
-	var popped int
-	arr, popped, err = pop(arr)
-	if err != nil {
-		fmt.Println("Pop error:", err)
-		return
-	}
-	fmt.Printf("Popped value: %d\n", popped)
-	fmt.Println("After popping:", arr)
-
-	foundIndex := search(arr, 1)
-	fmt.Printf("Found 1 at index: %d\n", foundIndex)
-
-	fmt.Println("Final array:", arr)
 }

@@ -4,6 +4,26 @@
 
 /**
  * Time complexity: O(1)
+ * Initializes the stack with a given initial capacity.
+ */
+void stackInit(Stack *stack, int capacity)
+{
+    arrayInit(&stack->array, capacity);
+}
+
+
+/**
+ * Time complexity: O(1)
+ * Frees the memory allocated for the stack and resets its properties.
+ */
+void stackFree(Stack *stack)
+{
+    arrayFree(&stack->array);
+}
+
+
+/**
+ * Time complexity: O(1)
  * Returns the element at the top of the stack.
  * Returns an error if the stack is empty.
  */
@@ -57,24 +77,6 @@ int stackPop(Stack *stack)
 int stackSize(Stack *stack)
 {
     return stack->array.size;
-}
-
-/**
- * Time complexity: O(1)
- * Initializes the stack with a given initial capacity.
- */
-void stackInit(Stack *stack, int capacity)
-{
-    arrayInit(&stack->array, capacity);
-}
-
-/**
- * Time complexity: O(1)
- * Frees the memory allocated for the stack and resets its properties.
- */
-void stackFree(Stack *stack)
-{
-    arrayFree(&stack->array);
 }
 
 /**
