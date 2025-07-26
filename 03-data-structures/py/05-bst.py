@@ -10,13 +10,13 @@ class BSTNode:
 
     # -------------------- Access --------------------
 
-    # Time Complexity: O(log n) average, O(n) worst-case
+    # Time Complexity: O(log n)
     def get_min(self) -> Optional[int]:
         if self.left is None:
             return self.val
         return self.left.get_min()
 
-    # Time Complexity: O(log n) average, O(n) worst-case
+    # Time Complexity: O(log n)
     def get_max(self) -> Optional[int]:
         if self.right is None:
             return self.val
@@ -24,7 +24,7 @@ class BSTNode:
 
     # -------------------- Search --------------------
 
-    # Time Complexity: O(log n) average, O(n) worst-case
+    # Time Complexity: O(log n)
     def exists(self, val: int) -> bool:
         if val == self.val:
             return True
@@ -38,7 +38,7 @@ class BSTNode:
 
     # -------------------- Insertion --------------------
 
-    # Time Complexity: O(log n) average, O(n) worst-case
+    # Time Complexity: O(log n) average,
     def insert(self, val: int) -> None:
         if self.val is None:
             self.val = val
@@ -60,7 +60,7 @@ class BSTNode:
 
     # -------------------- Deletion --------------------
 
-    # Time Complexity: O(log n) average, O(n) worst-case
+    # Time Complexity: O(log n) average
     def delete(self, val: int) -> Optional[BSTNode]:
         if self.val is None:
             return None
@@ -97,6 +97,7 @@ class BSTNode:
         return max(lh, rh) + 1
 
     # Time Complexity: O(n)
+    # Preorder = current node visited before its children
     def preorder_traversal(self, visited: list[int]) -> list[int]:
         visited.append(self.val)
         if self.left:
@@ -104,6 +105,17 @@ class BSTNode:
         if self.right:
             self.right.preorder_traversal(visited)
         return visited
+    
+    # Time Complexity: O(n)
+    # Postorder = current node visited after its children
+    def postorder_traversal(self, visited: list[int]) -> list[int]:
+        if self.left:
+            self.left.postorder_traversal(visited)
+        if self.right:
+            self.right.postorder_traversal(visited)
+        visited.append(self.val)
+        return visited
+
 
     # Time Complexity: O(n)
     def inorder_taversal(self, visited: list[int]) -> list[int]:
@@ -114,14 +126,6 @@ class BSTNode:
             self.right.inorder_taversal(visited)
         return visited
 
-    # Time Complexity: O(n)
-    def postorder_traversal(self, visited: list[int]) -> list[int]:
-        if self.left:
-            self.left.postorder_traversal(visited)
-        if self.right:
-            self.right.postorder_traversal(visited)
-        visited.append(self.val)
-        return visited
 
     # Time Complexity: O(n)
     def print(self, level: int = 0) -> None:
@@ -143,14 +147,14 @@ def main():
     print("Tree structure:")
     root.print()
 
-    print("\nInorder traversal:")
-    print(root.inorder_taversal([]))  # Should be sorted
-
     print("\nPreorder traversal:")
     print(root.preorder_traversal([]))
 
     print("\nPostorder traversal:")
     print(root.postorder_traversal([]))
+
+    print("\nInorder traversal:")
+    print(root.inorder_taversal([]))  # Should be sorted
 
     print("\nMin value:", root.get_min())
     print("Max value:", root.get_max())
