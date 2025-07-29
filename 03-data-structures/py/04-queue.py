@@ -7,7 +7,7 @@ class Node:
 
 
 class Queue:
-    """Queue implementation using a linked list."""
+    """Queue implementation using a doubly linked list."""
 
     def __init__(self):
         self.head = None

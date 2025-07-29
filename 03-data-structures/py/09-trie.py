@@ -1,22 +1,16 @@
 import unittest
 
-class Trie:
 
+class Trie:
     def __init__(self):
         self.root = {}
         self.end_symbol = "*"
 
-    def exists(self, word):
-        current = self.root
-        for letter in word:
-            if letter not in current:
-                return False
-            current = current[letter]
-        if self.end_symbol in current:
-            return True
-        return False
-
     def add(self, word):
+        """
+        Adds a word to the trie.
+        Time Complexity: O(m), where m is the length of the word.
+        """
         current = self.root
         for letter in word:
             if letter not in current:
@@ -24,26 +18,54 @@ class Trie:
             current = current[letter]
         current[self.end_symbol] = True
 
-    def search_level(self, current_level, current_prefix, words_acc):
+    def exists(self, word):
+        """
+        Checks if a word exists in the trie.
+        Time Complexity: O(m), where m is the length of the word.
+        """
+        current = self.root
+        for letter in word:
+            if letter not in current:
+                return False
+            current = current[letter]
+        return self.end_symbol in current
+
+    def __search_level(self, current_level, current_prefix, words_acc):
+        """
+        Recursive helper to collect words with a given prefix.
+        Time Complexity: O(k), where k is the total number of characters
+        in all words that match the prefix.
+        """
         if self.end_symbol in current_level:
             words_acc.append(current_prefix)
         for letter in sorted(current_level):
             if letter == self.end_symbol:
                 continue
             prefix = current_prefix + letter
-            self.search_level(current_level[letter], prefix, words_acc)
+            self.__search_level(current_level[letter], prefix, words_acc)
         return words_acc
 
     def words_with_prefix(self, prefix):
+        """
+        Returns all words that start with the given prefix.
+        Time Complexity:
+            O(m + k), where m is the length of the prefix,
+            and k is the total number of characters in all words with that prefix.
+        """
         words = []
         current_level = self.root
         for letter in prefix:
             if letter not in current_level:
                 return []
             current_level = current_level[letter]
-        return self.search_level(current_level, prefix, words)
+        return self.__search_level(current_level, prefix, words)
 
     def longest_common_prefix(self):
+        """
+        Finds the longest common prefix of all words in the trie.
+        Time Complexity: O(m), where m is the length of the shortest word
+        and all words share the same prefix up to m.
+        """
         current = self.root
         prefix = ""
         while True:
@@ -57,8 +79,13 @@ class Trie:
             else:
                 break
         return prefix
-    
+
     def find_matches(self, document):
+        """
+        Finds all words in the trie that appear as substrings in the document.
+        Time Complexity: O(d * w), where d is the length of the document,
+        and w is the average length of matching words in the trie.
+        """
         matches = set()
         for i in range(len(document)):
             current = self.root
@@ -67,10 +94,15 @@ class Trie:
                     break
                 current = current[c]
                 if self.end_symbol in current:
-                    matches.add(document[i:i + j + 1])
+                    matches.add(document[i : i + j + 1])
         return matches
 
     def advanced_find_matches(self, document, variations):
+        """
+        Similar to find_matches but with character variations mapping.
+        Time Complexity: O(d * w), where d is the length of the document,
+        and w is the average length of a match considering variations.
+        """
         matches = set()
         for i in range(len(document)):
             level = self.root
@@ -85,80 +117,42 @@ class Trie:
                     matches.add(document[i : j + 1])
         return matches
 
-class TestTrie(unittest.TestCase):
 
+class TestTrie(unittest.TestCase):
     def test_add_and_exists(self):
         trie = Trie()
-        # Initially, no words
         self.assertFalse(trie.exists("hello"))
-
-        # Add a word and test existence
         trie.add("hello")
         self.assertTrue(trie.exists("hello"))
-
-        # Test that prefixes without end symbol don't count
         self.assertFalse(trie.exists("hell"))
         self.assertFalse(trie.exists("helloo"))
-
-        # Add another word
         trie.add("hell")
         self.assertTrue(trie.exists("hell"))
         self.assertTrue(trie.exists("hello"))
 
     def test_exists_manual_root(self):
-        # Build a trie manually for the word 'test'
         trie = Trie()
-        trie.root = {
-            't': {
-                'e': {
-                    's': {
-                        't': {
-                            trie.end_symbol: True
-                        }
-                    }
-                }
-            }
-        }
+        trie.root = {"t": {"e": {"s": {"t": {trie.end_symbol: True}}}}}
         self.assertTrue(trie.exists("test"))
         self.assertFalse(trie.exists("tes"))
         self.assertFalse(trie.exists("testing"))
 
     def test_words_with_prefix(self):
         trie = Trie()
-        # Add some words
         for word in ["apple", "app", "apply", "apt", "bat", "batch"]:
             trie.add(word)
-
-        # Test prefix 'app'
         self.assertEqual(
-            sorted(trie.words_with_prefix("app")),
-            ["app", "apple", "apply"]
+            sorted(trie.words_with_prefix("app")), ["app", "apple", "apply"]
         )
-
-        # Test prefix 'bat'
-        self.assertEqual(
-            sorted(trie.words_with_prefix("bat")),
-            ["bat", "batch"]
-        )
-
-        # Test prefix not in trie
+        self.assertEqual(sorted(trie.words_with_prefix("bat")), ["bat", "batch"])
         self.assertEqual(trie.words_with_prefix("banana"), [])
 
     def test_words_with_prefix_manual_root(self):
-        # Manually build a trie for 'cat' and 'car'
         trie = Trie()
         trie.root = {
-            'c': {
-                'a': {
-                    't': {trie.end_symbol: True},
-                    'r': {trie.end_symbol: True}
-                }
-            }
+            "c": {"a": {"t": {trie.end_symbol: True}, "r": {trie.end_symbol: True}}}
         }
-        self.assertEqual(
-            sorted(trie.words_with_prefix("ca")),
-            ["car", "cat"]
-        )
+        self.assertEqual(sorted(trie.words_with_prefix("ca")), ["car", "cat"])
 
     def test_longest_common_prefix(self):
         trie = Trie()
@@ -176,7 +170,6 @@ class TestTrie(unittest.TestCase):
         self.assertEqual(trie3.longest_common_prefix(), "hello")
 
         trie4 = Trie()
-        # Empty trie should have empty prefix
         self.assertEqual(trie4.longest_common_prefix(), "")
 
     def test_find_matches(self):
@@ -188,7 +181,6 @@ class TestTrie(unittest.TestCase):
         matches = trie.find_matches(document)
         self.assertEqual(matches, {"apple", "bat"})
 
-        # Test no matches
         document2 = "No matches here"
         matches2 = trie.find_matches(document2)
         self.assertEqual(matches2, set())
@@ -199,15 +191,14 @@ class TestTrie(unittest.TestCase):
             trie.add(word)
 
         document = "I have 4pple and b@t."
-        variations = {"4": "a", "@": "a"}  # Map '4'->'a' and '@'->'a'
+        variations = {"4": "a", "@": "a"}
         matches = trie.advanced_find_matches(document, variations)
-        # Matches are returned with original substrings from document
         self.assertEqual(matches, {"4pple", "b@t"})
 
-        # Test with no variations
         document2 = "apple and bat"
         matches2 = trie.advanced_find_matches(document2, {})
         self.assertEqual(matches2, {"apple", "bat"})
+
 
 if __name__ == "__main__":
     unittest.main()
