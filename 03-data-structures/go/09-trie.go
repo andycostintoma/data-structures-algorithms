@@ -35,34 +35,36 @@ func (t *Trie) Add(word string) {
 	curr.isEnd = true
 }
 
-// Exists checks if a word exists in the trie.
+// Exists checks whether a complete word is in the trie.
 func (t *Trie) Exists(word string) bool {
 	curr := t.root
 	for _, ch := range word {
-		if _, ok := curr.children[ch]; !ok {
+		next, ok := curr.children[ch]
+		if !ok {
 			return false
 		}
-		curr = curr.children[ch]
+		curr = next
 	}
 	return curr.isEnd
 }
 
-// WordsWithPrefix returns all words starting with a given prefix.
+// WordsWithPrefix returns all stored words that start with the given prefix.
 func (t *Trie) WordsWithPrefix(prefix string) []string {
 	curr := t.root
 	for _, ch := range prefix {
-		if _, ok := curr.children[ch]; !ok {
+		next, ok := curr.children[ch]
+		if !ok {
 			return nil
 		}
-		curr = curr.children[ch]
+		curr = next
 	}
 	var results []string
-	t.dfs(curr, prefix, &results)
+	t.collectWords(curr, prefix, &results)
 	return results
 }
 
-// dfs is a recursive helper to collect words from a trie node.
-func (t *Trie) dfs(curr *node, prefix string, results *[]string) {
+// collectWords recursively collects all complete words from the current node.
+func (t *Trie) collectWords(curr *node, prefix string, results *[]string) {
 	if curr.isEnd {
 		*results = append(*results, prefix)
 	}
@@ -72,74 +74,71 @@ func (t *Trie) dfs(curr *node, prefix string, results *[]string) {
 	}
 	sort.Slice(letters, func(i, j int) bool { return letters[i] < letters[j] })
 	for _, ch := range letters {
-		t.dfs(curr.children[ch], prefix+string(ch), results)
+		t.collectWords(curr.children[ch], prefix+string(ch), results)
 	}
 }
 
-// LongestCommonPrefix finds the longest shared prefix of all words.
+// LongestCommonPrefix returns the longest prefix common to all words in the trie.
 func (t *Trie) LongestCommonPrefix() string {
+	var builder strings.Builder
 	curr := t.root
-	var prefix strings.Builder
-	for {
-		if curr.isEnd || len(curr.children) != 1 {
-			break
-		}
-		for ch, child := range curr.children {
-			prefix.WriteRune(ch)
-			curr = child
-			break
+	for len(curr.children) == 1 && !curr.isEnd {
+		for ch, next := range curr.children {
+			builder.WriteRune(ch)
+			curr = next
 		}
 	}
-	return prefix.String()
+	return builder.String()
 }
 
-// FindMatches finds all words from the trie that appear as substrings in the document.
-func (t *Trie) FindMatches(document string) map[string]bool {
+// FindMatches finds all trie words that appear as substrings in the input.
+func (t *Trie) FindMatches(text string) map[string]bool {
 	matches := make(map[string]bool)
-	runes := []rune(document)
-	for i := 0; i < len(runes); i++ {
+	runes := []rune(text)
+	for i := range runes {
 		curr := t.root
 		for j := i; j < len(runes); j++ {
 			ch := runes[j]
-			if next, ok := curr.children[ch]; ok {
-				curr = next
-				if curr.isEnd {
-					matches[string(runes[i:j+1])] = true
-				}
-			} else {
+			next, ok := curr.children[ch]
+			if !ok {
 				break
+			}
+			curr = next
+			if curr.isEnd {
+				matches[string(runes[i:j+1])] = true
 			}
 		}
 	}
 	return matches
 }
 
-// AdvancedFindMatches does the same as FindMatches but allows for character substitutions.
-func (t *Trie) AdvancedFindMatches(document string, variations map[rune]rune) map[string]bool {
+// AdvancedFindMatches allows substitutions via the provided mapping.
+func (t *Trie) AdvancedFindMatches(text string, variations map[rune]rune) map[string]bool {
 	matches := make(map[string]bool)
-	runes := []rune(document)
-	for i := 0; i < len(runes); i++ {
+	runes := []rune(text)
+	for i := range runes {
 		curr := t.root
 		for j := i; j < len(runes); j++ {
 			ch := runes[j]
 			if alt, ok := variations[ch]; ok {
 				ch = alt
 			}
-			if next, ok := curr.children[ch]; ok {
-				curr = next
-				if curr.isEnd {
-					matches[string(runes[i:j+1])] = true
-				}
-			} else {
+			next, ok := curr.children[ch]
+			if !ok {
 				break
+			}
+			curr = next
+			if curr.isEnd {
+				matches[string(runes[i:j+1])] = true
 			}
 		}
 	}
 	return matches
 }
 
+// PrintTree prints the structure of the trie.
 func (t *Trie) PrintTree() {
-	var printNode func(n *node, prefix string, level int)
+	var printNode func(*node, string, int)
 	printNode = func(n *node, prefix string, level int) {
 		indent := strings.Repeat("  ", level)
 		if n.isEnd {
@@ -159,12 +158,10 @@ func (t *Trie) PrintTree() {
 	printNode(t.root, "", 0)
 }
 
-// Example usage
 func main() {
 	trie := NewTrie()
-	words := []string{"apple", "app", "apply", "apt", "bat", "batch"}
-	for _, w := range words {
-		trie.Add(w)
+	for _, word := range []string{"apple", "app", "apply", "apt", "bat", "batch"} {
+		trie.Add(word)
 	}
 
 	fmt.Println("Exists 'app':", trie.Exists("app"))
