@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 type GraphMatrix struct {
 	adjMatrix [][]bool
 }
@@ -30,14 +28,4 @@ func (g *GraphMatrix) EdgeExists(u, v int) bool {
 		return false
 	}
 	return g.adjMatrix[u][v]
-}
-
-// Example usage
-func main() {
-	g := NewGraphMatrix(5)
-	g.AddEdge(0, 1)
-	g.AddEdge(1, 2)
-
-	fmt.Println(g.EdgeExists(0, 1)) // true
-	fmt.Println(g.EdgeExists(1, 3)) // false
 }

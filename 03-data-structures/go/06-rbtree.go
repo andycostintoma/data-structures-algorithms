@@ -194,19 +194,3 @@ func (tree *RBTree) PrettyPrint(node *RBNode, level int) {
 		}
 	}
 }
-
-func main() {
-	rbt := NewRBTree()
-
-	// Inserting values into the Red-Black Tree
-	rbt.Insert(10)
-	rbt.Insert(20)
-	rbt.Insert(15)
-	rbt.Insert(30)
-	rbt.Insert(25)
-	rbt.Insert(5)
-
-	// Pretty print the tree
-	fmt.Println("Red-Black Tree Structure:")
-	rbt.PrettyPrint(rbt.root, 0)
-}

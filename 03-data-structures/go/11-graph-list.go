@@ -85,12 +85,12 @@ func (g *Graph) UnconnectedVertices() []int {
 
 func (g *Graph) Bfs(start int) []int {
 	visited := newSet()
-	queue := []int{start}
+	queue := NewQueue[int]()
+	queue.Enqueue(start)
 	result := []int{}
 
-	for len(queue) > 0 {
-		curr := queue[0]
-		queue = queue[1:]
+	for queue.Size() > 0 {
+		curr, _ := queue.Dequeue()
 
 		if visited.contains(curr) {
 			continue
@@ -98,9 +98,37 @@ func (g *Graph) Bfs(start int) []int {
 		visited.add(curr)
 		result = append(result, curr)
 
-		for neightbour := range g.adj[curr] {
-			if !visited.contains(neightbour) {
-				queue = append(queue, neightbour)
+		if neighbors, ok := g.adj[curr]; ok {
+			for neighbor := range neighbors {
+				if !visited.contains(neighbor) {
+					queue.Enqueue(neighbor)
+				}
+			}
+		}
+	}
+	return result
+}
+
+func (g *Graph) Dfs(start int) []int {
+	visited := newSet()
+	stack := NewStack[int]()
+	stack.Push(start)
+	result := []int{}
+
+	for stack.Size() > 0 {
+		curr, _ := stack.Pop()
+
+		if visited.contains(curr) {
+			continue
+		}
+		visited.add(curr)
+		result = append(result, curr)
+
+		if neighbors, ok := g.adj[curr]; ok {
+			for neighbor := range neighbors {
+				if !visited.contains(neighbor) {
+					stack.Push(neighbor)
+				}
 			}
 		}
 	}
@@ -115,25 +143,4 @@ func (g *Graph) String() string {
 		result += fmt.Sprintf("%d: %v\n", node, adjList)
 	}
 	return result
-}
-
-func main() {
-	g := NewGraph()
-
-	g.AddNode(1)
-	g.AddNode(2)
-	g.AddNode(3)
-	g.AddNode(99) // unconnected node
-
-	g.AddEdge(1, 2)
-	g.AddEdge(2, 3)
-
-	fmt.Println("Edge 1-2 exists?", g.EdgeExists(1, 2)) // true
-	fmt.Println("Edge 1-3 exists?", g.EdgeExists(1, 3)) // false
-
-	fmt.Println("Adjacent to 2:", g.AdjacentNodes(2))    // [1 3]
-	fmt.Println("Unconnected:", g.UnconnectedVertices()) // [99]
-
-	fmt.Println("Graph: ", g)
-	fmt.Println("BFS: ", g.Bfs(1))
 }

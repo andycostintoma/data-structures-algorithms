@@ -47,8 +47,7 @@ class Graph:
             visited.add(curr)
             result.append(curr)
 
-            # Deterministic traversal
-            for neighbor in sorted(self.graph[curr]):
+            for neighbor in self.graph[curr]:
                 if neighbor not in visited:
                     queue.append(neighbor)
         return result
@@ -65,8 +64,7 @@ class Graph:
             visited.add(curr)
             result.append(curr)
 
-            # Deterministic traversal
-            for neighbor in sorted(self.graph[curr], reverse=True):
+            for neighbor in self.graph[curr]:
                 if neighbor not in visited:
                     stack.append(neighbor)
 

@@ -2,31 +2,32 @@ package main
 
 import "errors"
 
-type Queue struct {
-	list *LinkedList
-	tail *Node
+// Queue represents a FIFO queue using a linked list.
+type Queue[T comparable] struct {
+	list *LinkedList[T]
+	tail *Node[T]
 }
 
-func NewQueue() *Queue {
-	return &Queue{
-		list: NewLinkedList(),
+// NewQueue creates and returns a new empty queue.
+func NewQueue[T comparable]() *Queue[T] {
+	return &Queue[T]{
+		list: NewLinkedList[T](),
 		tail: nil,
 	}
 }
 
-// Peek returns the node at the front without removing it. O(1)
-func (q *Queue) Peek() (*Node, error) {
+// Peek returns the value at the front without removing it. O(1)
+func (q *Queue[T]) Peek() (T, error) {
+	var zero T
 	if q.list.Head == nil {
-		return nil, errors.New("queue is empty")
+		return zero, errors.New("queue is empty")
 	}
-	return q.list.Head, nil
+	return q.list.Head.Value, nil
 }
 
-// Enqueue adds a node to the end of the queue. O(1)
-func (q *Queue) Enqueue(node *Node) error {
-	if node == nil {
-		return errors.New("node cannot be nil")
-	}
+// Enqueue adds a value to the end of the queue. O(1)
+func (q *Queue[T]) Enqueue(value T) {
+	node := NewNode(value)
 	node.Next = nil
 
 	if q.tail == nil {
@@ -38,13 +39,13 @@ func (q *Queue) Enqueue(node *Node) error {
 		q.tail = node
 	}
 	q.list.Size++
-	return nil
 }
 
-// Dequeue removes and returns the node at the front of the queue. O(1)
-func (q *Queue) Dequeue() (*Node, error) {
+// Dequeue removes and returns the value at the front of the queue. O(1)
+func (q *Queue[T]) Dequeue() (T, error) {
+	var zero T
 	if q.list.Head == nil {
-		return nil, errors.New("queue is empty")
+		return zero, errors.New("queue is empty")
 	}
 	node := q.list.Head
 	q.list.Head = node.Next
@@ -55,10 +56,10 @@ func (q *Queue) Dequeue() (*Node, error) {
 		// Queue is now empty, reset tail
 		q.tail = nil
 	}
-	return node, nil
+	return node.Value, nil
 }
 
 // Size returns the current size of the queue.
-func (q *Queue) Size() int {
+func (q *Queue[T]) Size() int {
 	return q.list.Size
 }

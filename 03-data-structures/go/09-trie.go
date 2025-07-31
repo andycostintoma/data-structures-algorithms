@@ -157,30 +157,3 @@ func (t *Trie) PrintTree() {
 	}
 	printNode(t.root, "", 0)
 }
-
-func main() {
-	trie := NewTrie()
-	for _, word := range []string{"apple", "app", "apply", "apt", "bat", "batch"} {
-		trie.Add(word)
-	}
-
-	fmt.Println("Exists 'app':", trie.Exists("app"))
-	fmt.Println("Exists 'bat':", trie.Exists("bat"))
-	fmt.Println("Exists 'bats':", trie.Exists("bats"))
-
-	fmt.Println("Words with prefix 'ap':", trie.WordsWithPrefix("ap"))
-	fmt.Println("Words with prefix 'ba':", trie.WordsWithPrefix("ba"))
-	fmt.Println("Words with prefix 'z':", trie.WordsWithPrefix("z"))
-
-	fmt.Println("Longest Common Prefix:", trie.LongestCommonPrefix())
-
-	doc := "I have an apple and a bat."
-	fmt.Println("Matches in doc:", trie.FindMatches(doc))
-
-	variations := map[rune]rune{'4': 'a', '@': 'a'}
-	doc2 := "4pple and b@t"
-	fmt.Println("Advanced matches:", trie.AdvancedFindMatches(doc2, variations))
-
-	fmt.Println("All words in trie:")
-	trie.PrintTree()
-}
